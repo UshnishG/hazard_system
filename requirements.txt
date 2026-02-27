@@ -1,10 +1,7 @@
-Flask==2.3.2
-Werkzeug==2.3.6
-ultralytics==8.0.100
-opencv-python==4.8.0.76
-numpy==1.24.3
-Pillow==10.0.0
-torch==2.0.1
-torchvision==0.15.2
-roboflow==1.1.19
-supervision==0.17.1
+Flask
+opencv-python-headless
+numpy
+roboflow
+ultralytics
+supervision
+gunicorn
