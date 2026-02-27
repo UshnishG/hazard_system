@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threat Detection System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans text-gray-800">
+
+    <header class="bg-blue-900 text-white shadow-md py-6">
+        <div class="max-w-5xl mx-auto px-4 flex items-center justify-between">
+            <h1 class="text-2xl font-bold tracking-wider">AI Threat Detection</h1>
+            <p class="text-blue-200 text-sm">Auto-Routing Active</p>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-10">
+        
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-10 max-w-2xl mx-auto">
+            <h2 class="text-xl font-semibold mb-2 border-b pb-2 text-center">Upload Image for Analysis</h2>
+            <p class="text-sm text-gray-500 text-center mb-6">
+                The system will automatically scan <span class="font-bold text-gray-700">color images for landslides</span> 
+                and <span class="font-bold text-gray-700">grayscale images for landmines</span>.
+            </p>
+            
+            {% if error %}
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
+                <p>{{ error }}</p>
+            </div>
+            {% endif %}
+
+            <form action="/" method="post" enctype="multipart/form-data" id="uploadForm" class="space-y-6">
+                
+                <div class="flex justify-center">
+                    <input type="file" name="file" accept=".jpg,.jpeg,.png" required
+                           class="w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-gray-300 rounded-md p-2 cursor-pointer transition">
+                </div>
+
+                <button type="submit" id="submitBtn" 
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md transition duration-200 shadow-md">
+                    Analyze Image Automatically
+                </button>
+            </form>
+        </div>
+
+        {% if result_url %}
+        <div class="bg-white rounded-xl shadow-lg p-8 animate-fade-in-up">
+            <h2 class="text-xl font-semibold mb-6 border-b pb-2">Analysis Results</h2>
+            
+            <div class="mb-6 text-center">
+                {% if "SAFE" in status_text %}
+                    <span class="inline-block bg-green-100 text-green-800 text-lg px-6 py-2 rounded-full font-bold shadow-sm">
+                        {{ status_text }}
+                    </span>
+                {% else %}
+                    <span class="inline-block bg-red-100 text-red-800 text-lg px-6 py-2 rounded-full font-bold shadow-sm animate-pulse">
+                        ⚠️ {{ status_text }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="flex flex-col items-center">
+                <img src="{{ result_url }}" alt="Processed Result" class="max-w-full h-auto rounded-md shadow-md border border-gray-200">
+            </div>
+            
+            <div class="mt-8 text-center">
+                <a href="/" class="text-blue-600 hover:text-blue-800 font-medium underline">← Analyze another image</a>
+            </div>
+        </div>
+        {% endif %}
+
+    </main>
+
+    <div id="loadingOverlay" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 mb-4"></div>
+            <h2 class="text-xl font-semibold text-white">Analyzing Image...</h2>
+            <p class="text-gray-300 mt-2">Automatically detecting image type & connecting to AI.</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function() {
+            document
